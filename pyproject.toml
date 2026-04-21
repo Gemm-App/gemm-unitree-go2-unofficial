@@ -1,0 +1,81 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gemm-unitree-go2-unofficial"
+version = "0.1.0"
+description = "Unofficial Gemm adapter for Unitree Go2 via WebRTC"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Eitan Feldman" },
+    { name = "Guido Jacofsky" },
+    { name = "Matias Tenenbaum" },
+    { name = "Martin Duran" },
+]
+keywords = ["robotics", "unitree", "go2", "gemm", "webrtc", "adapter"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Typing :: Typed",
+]
+dependencies = [
+    "gemm-engine>=0.1.1",
+    "unitree-webrtc-connect>=2.0.5",
+]
+
+[project.optional-dependencies]
+testing = [
+    "gemm-engine[testing]",
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+]
+dev = [
+    "gemm-unitree-go2-unofficial[testing]",
+    "mypy>=1.8",
+    "ruff>=0.3",
+    "black>=24.0",
+]
+
+[project.entry-points."gemm.adapters"]
+unitree-go2 = "gemm_unitree_go2_unofficial:UnitreeAdapter"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gemm_unitree_go2_unofficial"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "strict"
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers"]
+markers = ["hardware: requires a real Unitree robot (deselect with -m 'not hardware')"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["gemm_unitree_go2_unofficial"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src/gemm_unitree_go2_unofficial"]
+
+[[tool.mypy.overrides]]
+module = "unitree_webrtc_connect.*"
+ignore_missing_imports = true
